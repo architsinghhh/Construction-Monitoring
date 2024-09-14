@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Video List with Image Swapping</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        /* Ensure the body allows scrolling */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        html {
+            height: 100%;
+        }
+        /* Center the container and make sure it grows to fit the content */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        /* Ensure the image section can scroll horizontally */
+        .thumbnail-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 0;
+            background-color: #fff;
+        }
+        
+        .thumbnail {
+            flex-shrink: 0;
+            margin: 0 5px;
+        }
+        /* Main image styling */
+        .main-image {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <!-- Container to center everything -->
+    <div class="container">
+        <!-- Video Player Section -->
+        <div class="relative bg-black rounded-md overflow-hidden w-full max-w-3xl mx-auto">
+            <!-- Tabs embedded inside the video player -->
+            <div class="absolute top-0 left-0 right-0 flex bg-gray-800 text-white text-center z-10 tabs-container">
+                <div id="tabMainVideo" class="flex-1 py-2 cursor-pointer bg-blue-600">Main Video</div>
+                <div id="tabVideoList" class="flex-1 py-2 cursor-pointer bg-gray-600">Video List</div>
+            </div>
+
+            <!-- Main Video Section -->
+            <div id="mainVideoTab" class="pt-12"> <!-- Added padding to ensure video is below the tabs -->
+                <video controls class="w-full h-auto" id="mainVideo">
+                    <source id="mainVideoSource" src="admin.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <!-- Video List Section -->
+            <div id="videoListTab" class="hidden pt-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-auto max-w-3xl">
+                    <div class="thumbnail cursor-pointer bg-white rounded-lg shadow-lg overflow-hidden relative" data-video="login.mp4">
+                        <video muted class="w-full h-48 object-cover">
+                            <source src="login.mp4" type="video/mp4">
+                        </video>
+                        <!-- Transparent Overlay with Video Name -->
+                        <div class="absolute inset-0 flex items-end justify-center bg-black bg-opacity-30">
+                            <h3 class="text-lg font-semibold text-white p-2">Thumbnail 1</h3>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail cursor-pointer bg-white rounded-lg shadow-lg overflow-hidden relative" data-video="hadoop.mp4">
+                        <video muted class="w-full h-48 object-cover">
+                            <source src="hadoop.mp4" type="video/mp4">
+                        </video>
+                        <!-- Transparent Overlay with Video Name -->
+                        <div class="absolute inset-0 flex items-end justify-center bg-black bg-opacity-30">
+                            <h3 class="text-lg font-semibold text-white p-2">Thumbnail 2</h3>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail cursor-pointer bg-white rounded-lg shadow-lg overflow-hidden relative" data-video="intro.mp4">
+                        <video muted class="w-full h-48 object-cover">
+                            <source src="intro.mp4" type="video/mp4">
+                        </video>
+                        <!-- Transparent Overlay with Video Name -->
+                        <div class="absolute inset-0 flex items-end justify-center bg-black bg-opacity-30">
+                            <h3 class="text-lg font-semibold text-white p-2">Thumbnail 3</h3>
+                        </div>
+                    </div>
+                    <!-- Add more thumbnails as needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabMainVideo = document.getElementById('tabMainVideo');
+        const tabVideoList = document.getElementById('tabVideoList');
+        const mainVideoTab = document.getElementById('mainVideoTab');
+        const videoListTab = document.getElementById('videoListTab');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const mainVideo = document.getElementById('mainVideo');
+        const mainVideoSource = document.getElementById('mainVideoSource'); // Get the <source> element inside the main video player
+
+        // Tab Switching Functionality
+        tabMainVideo.addEventListener('click', () => {
+            mainVideoTab.classList.remove('hidden');
+            videoListTab.classList.add('hidden');
+            tabMainVideo.classList.add('bg-blue-600');
+            tabVideoList.classList.remove('bg-blue-600');
+            tabVideoList.classList.add('bg-gray-600');
+        });
+
+        tabVideoList.addEventListener('click', () => {
+            videoListTab.classList.remove('hidden');
+            mainVideoTab.classList.add('hidden');
+            tabVideoList.classList.add('bg-blue-600');
+            tabMainVideo.classList.remove('bg-blue-600');
+            tabMainVideo.classList.add('bg-gray-600');
+
+            // Pause the main video when switching to the video list
+            if (!mainVideo.paused) {
+                mainVideo.pause();
+            }
+        });
+
+        // Thumbnail click events for video list
+        thumbnails.forEach((thumbnail) => {
+            thumbnail.addEventListener('click', () => {
+                const selectedVideoSrc = thumbnail.getAttribute('data-video');
+                mainVideoSource.src = selectedVideoSrc;
+                mainVideo.load();
+                mainVideo.play();
+        
+                // Automatically switch to the Main Video Player tab after selecting a video
+                tabMainVideo.click();
+        
+                // Add this line to scroll the main video into view
+                mainVideo.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Function to change the main image
+        
+
+        // Load the initial video when the page loads
+        mainVideo.load();
+    </script>
+
+</body>
+</html>
